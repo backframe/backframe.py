@@ -1,18 +1,10 @@
 from .tokenizer import Tokenizer, Token
 
-class Block:
-    def __init__(self, t: str, id: str) -> None:
-        self._type = t
-        self.id = id
-        self.variables = {}
-        self.blocks = []
-
 
 class Parser:
     def __init__(self) -> None:
         pass
 
-    # TODO: Define productions
     def parse(self, val: str):
         self._string = val
         self._tokenizer = Tokenizer(val)
@@ -83,6 +75,8 @@ class Parser:
             return self._eat("BOOLEAN")
         elif next == "[":
             return self.array()
+        elif next == "{":
+            return self.object()
         else:
             return self._eat("STRING")
 
@@ -97,6 +91,19 @@ class Parser:
 
         self._eat("]")
         return Token("ARRAY", "|".join(values))
+
+    def object(self):
+        values = []
+        self._eat("{")
+
+        while self._lookahead._type != "}":
+            key = self._eat("IDENTIFIER")
+            self._eat(":")
+            value = self._eat("IDENTIFIER")
+            values.append(f"{key}->{value}")
+
+        self._eat("}")
+        return Token("OBJECT", "|".join(values))
 
     # Generic block statement node
     def block_statement(self):
