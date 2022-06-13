@@ -32,11 +32,12 @@ Spec = [
     [r"^\bresource\b", "RESOURCE"],
     [r"^\bmethod\b", "METHOD"],
     [r"^\bmigration\b", "MIGRATION"],
-    [r"^\bschemaDef\b", "SCHEMA"],
     [r"^\bversion\b", "VERSION"],
 
+
     # Identifier
-    [r"^\w+", "IDENTIFIER"]
+    [r"^\w+", "IDENTIFIER"],
+
 ]
 
 class Token:
