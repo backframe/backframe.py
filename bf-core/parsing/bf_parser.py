@@ -1,4 +1,4 @@
-from .tokenizer import Tokenizer, Token
+from tokenizer import Tokenizer, Token
 
 
 class Parser:
@@ -100,10 +100,12 @@ class Parser:
             key = self._eat("IDENTIFIER")
             self._eat(":")
             value = self._eat("IDENTIFIER")
-            values.append(f"{key}->{value}")
+            self._eat("COMMA")
+            values.append(f"{key.value}->{value.value}")
 
         self._eat("}")
-        return Token("OBJECT", "|".join(values))
+        print(";".join(values))
+        return Token("OBJECT", ";".join(values))
 
     # Generic block statement node
     def block_statement(self):
