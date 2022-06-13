@@ -1,19 +1,18 @@
 import unittest
-from bf_parser import Parser
+import bf_parser
 
 class TestMain(unittest.TestCase):
-    def parse_simple(self):
-        p = Parser()
+    def test_parse_simple(self):
+        p = bf_parser.Parser()
 
         ast = p.parse("""
         section Interfaces {}
         """
         )
-        print(ast)
 
         expected_ast = {
             "type": "Specfile",
-            "body": [
+            "sections": [
                 {
                     "type": "SECTION",
                     "name": "Interfaces",
@@ -24,4 +23,8 @@ class TestMain(unittest.TestCase):
 
         self.assertEqual(ast, expected_ast)
 
-unittest.main()
+    def test_parse_complex(self):
+        pass
+
+if __name__ == "__main__":
+    unittest.main()
