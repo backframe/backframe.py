@@ -28,9 +28,25 @@ def write_block(s, depth: int):
             value: str = item['value']
 
             if value.__contains__("|"):
+                # tis array
                 v = value.replace("|", ",")
                 temp = f"{name} = [{v},];"
                 tmpl += f"\t{ident}{temp}\n"
+            elif value.__contains__(";"):
+                # tis an object
+                tmpl += f"\t{ident}{name} = "
+                tmpl += "{\n"
+
+                fields = value.split(";")
+                for f in fields:
+                    pair = f.split("->")
+                    k = pair[0]
+                    v = pair[1]
+
+                    tmpl += f"\t{ident}\t{k}: {v},\n"
+                
+                tmpl += f"\t{ident}"
+                tmpl += "};\n"
             else:
                 temp = f"{name} = {value};"
                 tmpl += f"\t{ident}{temp}\n"
