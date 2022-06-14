@@ -1,5 +1,44 @@
 from .tokenizer import Tokenizer, Token
 
+# 
+# Specfile
+# 	: SectionList
+# 	;
+
+# SectionList
+#   : Section
+# 	: SectionList Section
+# 	;
+
+# Section
+#   : StatementList
+#   ;
+
+# StatementList
+# 	: Statement
+# 	| StatementList Statement
+# 	;
+
+# Statement
+# 	: BlockStatement
+# 	| ExpressionStatement
+# 	;
+
+# BlockStatement
+# 	: 'BLOCK_TYPE' IDENTIFIER '{' OptStatementList '}'
+# 	;
+
+# ExpressionStatement
+# 	: IDENTIFIER ASSIGNMENT_OP LITERAL
+# 	;
+
+# Literal
+# 	: STRING
+# 	| ARRAY
+# 	| OBJECT
+#   | BOOLEAN
+# 	;
+
 
 class Parser:
     def __init__(self) -> None:
@@ -47,6 +86,7 @@ class Parser:
         return stmnts
 
     def statement(self):
+        # TODO: Improve this
         next = self._lookahead._type
         if next == "IDENTIFIER":
             return self.expression_statement()
@@ -109,8 +149,7 @@ class Parser:
 
     # Generic block statement node
     def block_statement(self):
-        token = self._lookahead
-        name = self._eat(token._type)
+        name = self.block_type()
         id = self._eat("IDENTIFIER")
         self._eat("{")
 
@@ -122,6 +161,25 @@ class Parser:
             "name": id.value,
             "body": body
         }
+
+    def block_type(self):
+        next = self._lookahead._type
+        types = [
+            "INTERFACE",
+            "PROVIDER",
+            "INTEGRATION",
+            "METHOD",
+            "VERSION",
+            "MIGRATION",
+            "DATABASE",
+            "RESOURCE"
+        ]
+
+        for t in types:
+            if next == t:
+                return self._eat(t)
+
+        raise SyntaxError(f"Unknown block type {next}")
 
     def _eat(self, _type: str):
         token = self._lookahead
