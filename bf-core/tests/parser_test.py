@@ -31,7 +31,12 @@ class TestMain(unittest.TestCase):
         section Interfaces {
             interface Rest {
                 isVersioned = true;
+
+                versions 1 {
+
+                }
             }
+
         }   
         """)
         
@@ -50,6 +55,11 @@ class TestMain(unittest.TestCase):
                                 "type": "ASSIGNMENT",
                                 "name": "isVersioned",
                                 "value": "true"
+                                },
+                                {
+                                    "type": "VERSION",
+                                    "name": "1",
+                                    "body": []
                                 }
                             ]
                         }
