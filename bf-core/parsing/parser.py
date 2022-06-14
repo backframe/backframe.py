@@ -1,4 +1,4 @@
-from tokenizer import Tokenizer, Token
+from .tokenizer import Tokenizer, Token
 
 
 class Parser:
