@@ -44,11 +44,14 @@ class Token:
     def __init__(self, _t: str, value: str) -> None:
         self._type = _t
         self.value = value
+       
 
 class Tokenizer:
     def __init__(self, val: str) -> None:
         self._cursor = 0
         self._string = val
+        self.line = 0
+        self.column = 0
 
     def has_more_tokens(self):
         return self._cursor < len(self._string)
@@ -74,13 +77,22 @@ class Tokenizer:
                 return Token(_type, value)
 
         # if no matches
-        raise SyntaxError(f"unexpected token: `{val[0]}`")
+        raise SyntaxError(f"On line: {self.line}, column: {self.column}. unexpected token: `{val[0]}`")
             
 
     def _match(self, regex: re.Pattern, val: str):
         matched = regex.findall(val)
         if len(matched) == 0:
             return None
+
+        value: str = matched[0]
+        new_lines = value.count("\n")
+        self._cursor += len(value)
         
-        self._cursor += len(matched[0])
-        return matched[0]
+        self.line += new_lines
+        if new_lines > 0:
+            self.column = 0
+        self.column += len(value.lstrip())
+        
+
+        return value
