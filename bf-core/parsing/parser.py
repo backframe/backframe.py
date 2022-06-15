@@ -95,9 +95,10 @@ class Parser:
         return stmnts
 
     def statement(self):
-        # TODO: Improve this
-        next = self._lookahead._type
-        if next == "IDENTIFIER":
+        value = self._tokenizer._string
+        idx = self._tokenizer._cursor + 1
+
+        if value[idx] == "=":
             return self.expression_statement()
         else:
             return self.block_statement()
