@@ -32,8 +32,8 @@ class TestMain(unittest.TestCase):
             interface Rest {
                 isVersioned = true;
 
-                versions 1 {
-
+                version 1 {
+                    
                 }
             }
 
