@@ -174,28 +174,25 @@ class Parser:
 
     def block_type(self):
         next = self._lookahead._type
-        types = [
-            "INTERFACE",
-            "PROVIDER",
-            "INTEGRATION",
-            "METHOD",
-            "VERSION",
-            "MIGRATION",
-            "DATABASE",
-            "RESOURCE"
-        ]
 
-        for t in types:
+        for t in self.known_blocks:
             if next == t:
                 return self._eat(t)
 
-        raise SyntaxError(f"Unknown block type {next}")
+      
+        raise SyntaxError(f"On line: {self.get_ln()}, column: {self.get_col()}.  Found unknown block: `{self._lookahead.value}`")
 
     def _eat(self, _type: str):
         token = self._lookahead
         if token._type != _type:
-            raise SyntaxError(f"Expected token: {_type} but instead found: {token._type}")
+            raise SyntaxError(f"On line: {self.get_ln()}, column: {self.get_col()}. Expected: `{_type}` but instead found: `{token._type}`")
         
         # Advance to next token
         self._lookahead = self._tokenizer.get_next_token()
         return token
+
+    def get_ln(self):
+        return self._tokenizer.line
+
+    def get_col(self):
+        return self._tokenizer.column
