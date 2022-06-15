@@ -42,7 +42,16 @@ from .tokenizer import Tokenizer, Token
 
 class Parser:
     def __init__(self) -> None:
-        pass
+        self.known_blocks = [
+            "INTERFACE",
+            "PROVIDER",
+            "INTEGRATION",
+            "METHOD",
+            "VERSION",
+            "MIGRATION",
+            "DATABASE",
+            "RESOURCE"
+        ]
 
     def parse(self, val: str):
         self._string = val
