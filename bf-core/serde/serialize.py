@@ -10,13 +10,13 @@ def serialize(ast):
     
 
 def write_block(s, depth: int):
-    template, ident = "", ""
+    template, indent = "", ""
     has_content = len(s['body']) > 0
 
     for _ in range(depth):
-        ident += "\t"
+        indent += "\t"
 
-    template += f"{ident}{s['type'].lower()} {s['name']} "
+    template += f"{indent}{s['type'].lower()} {s['name']} "
     template += "{"
     if has_content:
         template += "\n"
@@ -31,10 +31,10 @@ def write_block(s, depth: int):
                 # tis array
                 v = value.replace("|", ",")
                 temp = f"{name} = [{v},];"
-                template += f"\t{ident}{temp}\n"
+                template += f"\t{indent}{temp}\n"
             elif value.__contains__(";"):
                 # tis an object
-                template += f"\t{ident}{name} = "
+                template += f"\t{indent}{name} = "
                 template += "{\n"
 
                 fields = value.split(";")
@@ -43,20 +43,20 @@ def write_block(s, depth: int):
                     k = pair[0]
                     v = pair[1]
 
-                    template += f"\t{ident}\t{k}: {v},\n"
+                    template += f"\t{indent}\t{k}: {v},\n"
                 
-                template += f"\t{ident}"
+                template += f"\t{indent}"
                 template += "};\n"
             else:
                 temp = f"{name} = {value};"
-                template += f"\t{ident}{temp}\n"
+                template += f"\t{indent}{temp}\n"
 
         else:
             block = write_block(item , depth+1)
             template += f"\n{block}\n"
 
     if has_content:
-        template += f"{ident}"
+        template += f"{indent}"
 
     template += "}"
     return template
