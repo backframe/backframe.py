@@ -7,7 +7,7 @@ from .tokenizer import Tokenizer, Token
 
 # SectionList
 #   : Section
-# 	: SectionList Section
+# 	| SectionList Section
 # 	;
 
 # Section
@@ -37,6 +37,7 @@ from .tokenizer import Tokenizer, Token
 # 	| ARRAY
 # 	| OBJECT
 #   | BOOLEAN
+#   | CALL_EXPRESSION
 # 	;
 
 
