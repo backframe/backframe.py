@@ -22,6 +22,8 @@ Spec = [
     [r"^,", "COMMA"],
     [r"^\btrue\b", "BOOLEAN"],
     [r"^\bfalse\b", "BOOLEAN"],
+    [r"^\w+\('[^']*'\)", "FN_CALL"],
+    [r'^\w+\("[^"]*"\)', "FN_CALL"],
 
     # Keywords
     [r"^\bsection\b", "SECTION"],
