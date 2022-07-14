@@ -106,31 +106,15 @@ class Parser:
 
     def expression_statement(self):
         name = self._eat("IDENTIFIER")
-        self._eat("ASSIGNMENT_OP")
-        next = self._lookahead
+        self._eat("ASSIGNMENT_OP")  
+        token = self.literal()
 
-        if next._type == "FN_CALL":
-            token = self._eat("FN_CALL")
-            parts = token.value.split("(")
-
-            self._eat(";")
-            return {
-                "type": "ASSIGNMENT",
-                "name": name.value,
-                "value": {
-                    "function": parts[0],
-                    "args": parts[1].removesuffix(")")
-                }
-            }
-        else:
-            token = self.literal()
-
-            self._eat(";")
-            return {
-                "type": "ASSIGNMENT",
-                "name": name.value,
-                "value": token.value
-            }
+        self._eat(";")
+        return {
+            "type": "ASSIGNMENT",
+            "name": name.value,
+            "body": token
+        }
 
 
     def literal(self):
@@ -144,8 +128,21 @@ class Parser:
             return self.array()
         elif next == "{":
             return self.object()
+        elif next == "CALL_EXPRESSION":
+            return self.fn_call()
         else:
             return self._eat("STRING")
+
+    def fn_call(self):
+        token = self._eat("CALL_EXPRESSION")
+        parts = token.value.split("(")
+
+        ctx = {
+             "function": parts[0],
+             "args": parts[1].removesuffix(")")
+        }
+
+        return Token("CALL_EXPRESSION", ctx)
 
     def array(self):
         values = []
@@ -157,22 +154,21 @@ class Parser:
             values.append(tok.value)
 
         self._eat("]")
-        return Token("ARRAY", "|".join(values))
+        return Token("ARRAY", values)
 
     def object(self):
-        values = []
+        values = {}
         self._eat("{")
 
         while self._lookahead._type != "}":
-            key = self._eat("IDENTIFIER")
+            key = self._eat("IDENTIFIER").value
             self._eat(":")
-            value = self._eat("IDENTIFIER")
+            value = self._eat("IDENTIFIER").value
             self._eat("COMMA")
-            values.append(f"{key.value}->{value.value}")
+            values[key] = value
 
         self._eat("}")
-        print(";".join(values))
-        return Token("OBJECT", ";".join(values))
+        return Token("OBJECT", values)
 
     # Generic block statement node
     def block_statement(self):
