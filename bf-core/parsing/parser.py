@@ -107,14 +107,30 @@ class Parser:
     def expression_statement(self):
         name = self._eat("IDENTIFIER")
         self._eat("ASSIGNMENT_OP")
-        token = self.literal()
+        next = self._lookahead
 
-        self._eat(";")
-        return {
-            "type": "ASSIGNMENT",
-            "name": name.value,
-            "value": token.value
-        }
+        if next._type == "FN_CALL":
+            token = self._eat("FN_CALL")
+            parts = token.value.split("(")
+
+            self._eat(";")
+            return {
+                "type": "ASSIGNMENT",
+                "name": name.value,
+                "value": {
+                    "function": parts[0],
+                    "args": parts[1].removesuffix(")")
+                }
+            }
+        else:
+            token = self.literal()
+
+            self._eat(";")
+            return {
+                "type": "ASSIGNMENT",
+                "name": name.value,
+                "value": token.value
+            }
 
 
     def literal(self):
