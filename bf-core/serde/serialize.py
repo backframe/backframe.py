@@ -25,41 +25,35 @@ def write_block(s, depth: int):
     for item in s['body']:
         if item['type'] == "ASSIGNMENT":
             name = item['name']
+            token = item['body']
 
-            if isinstance(item['value'], dict):
-                value: dict = item['value']
+            _type = token._type
+            value = token.value
+
+            if _type == "CALL_EXPRESSION":
                 fn_name = value['function']
                 fn_arg = value['args']
                 temp = f"{name} = {fn_name}({fn_arg});"
 
                 template += f"\t{indent}{temp}\n"
+            elif _type == "ARRAY": 
+                elements = ",".join(value)
+                temp = f"{name} = [{elements},];"
+                template += f"\t{indent}{temp}\n"
+
+            elif _type == "OBJECT":
+                template += f"\t{indent}{name} = "
+                template += "{\n"
+
+                for k,v in value.items():
+                    template += f"\t{indent}\t{k}: {v},\n"
+                
+                template += f"\t{indent}"
+                template += "};\n"
+            
             else:
-
-                value: str = item['value']
-
-                if value.__contains__("|"):
-                    # tis array
-                    v = value.replace("|", ",")
-                    temp = f"{name} = [{v},];"
-                    template += f"\t{indent}{temp}\n"
-                elif value.__contains__(";"):
-                    # tis an object
-                    template += f"\t{indent}{name} = "
-                    template += "{\n"
-
-                    fields = value.split(";")
-                    for f in fields:
-                        pair = f.split("->")
-                        k = pair[0]
-                        v = pair[1]
-
-                        template += f"\t{indent}\t{k}: {v},\n"
-                    
-                    template += f"\t{indent}"
-                    template += "};\n"
-                else:
-                    temp = f"{name} = {value};"
-                    template += f"\t{indent}{temp}\n"
+                temp = f"{name} = {value};"
+                template += f"\t{indent}{temp}\n"
 
         else:
             block = write_block(item , depth+1)
